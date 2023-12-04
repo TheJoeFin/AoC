@@ -103,6 +103,80 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
 
     public int Attempt1Part2()
     {
-        return 2;
+        var lines = _input.Split(Environment.NewLine);
+
+        // The Elf would first like to know which games would have been possible if the bag contained only 
+        // 12 red cubes
+        // 13 green cubes
+        // 14 blue cubes
+
+        int redMax = 12;
+        int greenMax = 13;
+        int blueMax = 14;
+
+
+
+        int sum = 0;
+        // parse each line
+        foreach (var line in lines)
+        {
+            List<int> reds = [0];
+            List<int> greens = [0];
+            List<int> blues = [0];
+
+            string cleanedLine = line.Replace(';', ',');
+            var split1 = cleanedLine.Split(':');
+            var gameTitleSplit = split1[0].Split(' ');
+
+            bool canParseGameNumber = int.TryParse(gameTitleSplit[1], out int gameNumber);
+            if (!canParseGameNumber)
+            {
+                Console.WriteLine($"Could not parse game number from {gameTitleSplit[1]}");
+                continue;
+            }
+
+            var results = split1[1].Trim().Split(',');
+
+            foreach (var result in results)
+            {
+                var split2 = result.Trim().Split(' ');
+                var color = split2[1];
+
+                bool canParseCount = int.TryParse(split2[0], out int count);
+                if (!canParseCount)
+                {
+                    Console.WriteLine($"Could not parse count from {split2[0]}");
+                    continue;
+                }
+
+                if (color == "red")
+                {
+                    reds.Add(count);
+                }
+                else if (color == "green")
+                {
+                    greens.Add(count);
+                }
+                else if (color == "blue")
+                {
+                    blues.Add(count);
+                }
+
+            }
+            int biggestRed = reds.Max();
+            int biggestGreen = greens.Max();
+            int biggestBlue = blues.Max();
+
+            int gamePower = biggestRed * biggestGreen * biggestBlue;
+
+            if (biggestRed <= redMax && biggestGreen <= greenMax && biggestBlue <= blueMax)
+            {
+                // Console.WriteLine($"Game {gameNumber} is possible");
+                // Console.WriteLine($"Red: {biggestRed}, Green: {biggestGreen}, Blue: {biggestBlue}");
+            }
+            sum += gamePower;
+        }
+
+        return sum;
     }
 }
