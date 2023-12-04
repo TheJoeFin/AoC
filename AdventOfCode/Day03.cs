@@ -2,13 +2,23 @@
 
 namespace AdventOfCode;
 
-public class Day00 : BaseDay
+public class Day03 : BaseDay
 {
     private readonly string _input;
 
-    private readonly string _testInput = @"";
+    private readonly string _testInput = @"A467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..";
 
-    public Day00()
+
+    public Day03()
     {
         _input = File.ReadAllText(InputFilePath);
     }
