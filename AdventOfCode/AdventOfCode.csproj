@@ -12,6 +12,7 @@
 
   <PropertyGroup>
     <NoWarn>S101</NoWarn>
+    <NoWarn>CS0414</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
