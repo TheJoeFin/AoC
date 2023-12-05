@@ -43,7 +43,42 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
 
     public int Attempt1Part2()
     {
-        return 2;
+        var lines = _input.Split(Environment.NewLine);
+
+        List<ScratchOffCard> cards = [];
+
+        foreach (var line in lines)
+        {
+            var card = new ScratchOffCard(line);
+            cards.Add(card);
+        }
+        List<ScratchOffCard> wonCards = [];
+        foreach (ScratchOffCard card in cards)
+        {
+            wonCards.AddRange(GetCardsFromCardNumbers(cards, card.CardsWon));
+        }
+
+        return wonCards.Count + cards.Count;
+    }
+
+    private List<ScratchOffCard> GetCardsFromCardNumbers(List<ScratchOffCard> cards, HashSet<int> wonCardNumbers)
+    {
+        List<ScratchOffCard> wonCards = [];
+
+        foreach (int wonInt in wonCardNumbers)
+        {
+            wonCards.Add(cards[wonInt - 1]);
+        }
+
+        List<ScratchOffCard> wonChildren = [];
+        foreach (ScratchOffCard card in wonCards)
+        {
+            wonChildren.AddRange(GetCardsFromCardNumbers(cards, card.CardsWon));
+        }
+
+        wonCards.AddRange(wonChildren);
+
+        return wonCards;
     }
 }
 
@@ -54,6 +89,8 @@ public class ScratchOffCard
     public HashSet<int> WinningNumbers { get; set; } = [];
     public HashSet<int> ScratchOffNumbers { get; set; } = [];
     public int Score { get; set; }
+
+    public HashSet<int> CardsWon { get; set; } = [];
 
     public ScratchOffCard(string rawLine)
     {
@@ -75,14 +112,36 @@ public class ScratchOffCard
             throw new Exception("Invalid card");
 
         Score = CalculateCardScore();
+        CardsWon = CalculateCardsWon();
+    }
+
+    private HashSet<int> CalculateCardsWon()
+    {
+        HashSet<int> cardsWon = [];
+
+        int cardsWonCount = CalculateNumberOfCardsWon();
+
+        for (int i = 1; i <= cardsWonCount; i++)
+        {
+            cardsWon.Add(i + CardNumber);
+        }
+
+        return cardsWon;
+    }
+
+    private int CalculateNumberOfCardsWon()
+    {
+        int numberOfWinners = 0;
+        foreach (int winner in WinningNumbers)
+            if (ScratchOffNumbers.Contains(winner))
+                numberOfWinners++;
+
+        return numberOfWinners;
     }
 
     private int CalculateCardScore()
     {
-        int numberOfWinners = -1;
-        foreach (int winner in WinningNumbers)
-            if (ScratchOffNumbers.Contains(winner))
-                numberOfWinners++;
+        int numberOfWinners = CalculateNumberOfCardsWon() - 1;
 
         if (numberOfWinners == -1)
             return 0;
