@@ -30,7 +30,7 @@ public class Day03 : BaseDay
 
     public int Attempt1()
     {
-        var lines = _testInput.Split(Environment.NewLine);
+        var lines = _input.Split(Environment.NewLine);
         // parse into a 2d array
         var grid = new char[lines.Length, lines[0].Length];
         for (int i = 0; i < lines.Length; i++)
@@ -207,15 +207,33 @@ public class Day03 : BaseDay
             }
         }
 
+        List<NumberAndCoords> correctNumberAndCoords = [];
+
         // console write the numbers and their coordinates
         foreach (var numberAndCoords in numbersAndCoords)
         {
-            Console.WriteLine($"{numberAndCoords.Number}");
+            bool madeMatch = false;
+            foreach (var coords in numberAndCoords.Coordinates)
+            {
+                foreach (var item in coordinatesOfNumbersAdjacentToSymbol)
+                {
+                    if (coords == item)
+                    {
+                        correctNumberAndCoords.Add(numberAndCoords);
+                        madeMatch = true;
+                        break;
+                    }
+                }
+                if (madeMatch)
+                    break;
+            }
         }
 
         int sum = 0;
-
-
+        foreach (var item in correctNumberAndCoords)
+        {
+            sum += item.Number;
+        }
 
         return sum;
     }
