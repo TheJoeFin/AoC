@@ -24,11 +24,69 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
 
     public int Attempt1()
     {
-        return 1;
+        var lines = _input.Split(Environment.NewLine);
+
+        List<ScratchOffCard> cards = [];
+
+        foreach (var line in lines)
+        {
+            var card = new ScratchOffCard(line);
+            cards.Add(card);
+        }
+
+        int sum = 0;
+        foreach (ScratchOffCard card1 in cards)
+            sum += card1.Score;
+
+        return sum;
     }
 
     public int Attempt1Part2()
     {
         return 2;
+    }
+}
+
+
+public class ScratchOffCard
+{
+    public int CardNumber { get; set; }
+    public HashSet<int> WinningNumbers { get; set; } = [];
+    public HashSet<int> ScratchOffNumbers { get; set; } = [];
+    public int Score { get; set; }
+
+    public ScratchOffCard(string rawLine)
+    {
+        var split = rawLine.Split(":");
+        CardNumber = int.Parse(split[0].Replace("Card ", "").Trim());
+        var numbers = split[1].Split("|");
+
+        var winningNumStrings = numbers[0].Split(" ");
+        foreach (var num in winningNumStrings)
+            if (int.TryParse(num, out int number))
+                WinningNumbers.Add(number);
+
+        var scratchOffNumStrings = numbers[1].Split(" ");
+        foreach (var num in scratchOffNumStrings)
+            if (int.TryParse(num, out int number))
+                ScratchOffNumbers.Add(number);
+
+        if (WinningNumbers.Count == 0 || ScratchOffNumbers.Count == 0)
+            throw new Exception("Invalid card");
+
+        Score = CalculateCardScore();
+    }
+
+    private int CalculateCardScore()
+    {
+        int numberOfWinners = -1;
+        foreach (int winner in WinningNumbers)
+            if (ScratchOffNumbers.Contains(winner))
+                numberOfWinners++;
+
+        if (numberOfWinners == -1)
+            return 0;
+
+        return (int)Math.Pow(2, numberOfWinners);
     }
 }
